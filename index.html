@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RP 사운드 믹서</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background-color: #f1f5f9; color: #334155; font-family: system-ui, -apple-system, sans-serif; }
+    .card { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); }
+    .input-field { background-color: #f8fafc; border: 1px solid #cbd5e1; color: #0f172a; }
+    .input-field:focus { border-color: #ec4899; outline: none; ring: 2px; ring-color: #fbcfe8; }
+    .tag { background-color: #f1f5f9; border: 1px solid #cbd5e1; color: #334155; }
+    .tag-active { background-color: #fce7f3; border-color: #f472b6; color: #9d174d; }
+  </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen flex flex-col items-center justify-center">
+  <main class="w-full max-w-2xl">
+    <header class="mb-6 text-center">
+      <h1 class="text-3xl font-bold text-slate-800 tracking-tight">RP 사운드 믹서</h1>
+      <p class="text-sm text-slate-500 mt-1">상황별 감탄사를 등록하고 조합하여 자연스러운 텍스트를 생성하세요.</p>
+    </header>
+
+    <section class="card p-6 space-y-6">
+      <div>
+        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">편집할 카테고리 선택</label>
+        <div class="flex flex-wrap gap-2" id="categoryTabs">
+          <button data-cat="soft" class="tab-btn tag px-3 py-1.5 rounded-lg text-sm font-semibold transition">약한 자극</button>
+          <button data-cat="hard" class="tab-btn tag px-3 py-1.5 rounded-lg text-sm font-semibold transition">강한 자극</button>
+          <button data-cat="resist" class="tab-btn tag px-3 py-1.5 rounded-lg text-sm font-semibold transition">거부/저항</button>
+          <button data-cat="positive" class="tab-btn tag px-3 py-1.5 rounded-lg text-sm font-semibold transition">긍정/도발</button>
+          <button data-cat="breath" class="tab-btn tag px-3 py-1.5 rounded-lg text-sm font-semibold transition">숨소리/기타</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-1.5">
+          <label for="wordsInput" class="text-xs font-bold text-slate-500 uppercase tracking-wider" id="currentCatLabel">현재 카테고리 단어</label>
+          <span class="text-xs text-slate-400">쉼표(,)로 구분하여 입력</span>
+        </div>
+        <textarea id="wordsInput" class="input-field w-full h-24 p-3 rounded-xl text-sm resize-y" placeholder="단어를 입력하세요..."></textarea>
+      </div>
+
+      <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+        <div>
+          <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">믹스에 포함할 카테고리</span>
+          <div class="flex flex-wrap gap-3 text-sm text-slate-700">
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" class="mix-cat rounded accent-pink-500" value="soft" checked> 약한 자극</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" class="mix-cat rounded accent-pink-500" value="hard"> 강한 자극</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" class="mix-cat rounded accent-pink-500" value="resist"> 거부/저항</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" class="mix-cat rounded accent-pink-500" value="positive"> 긍정/도발</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" class="mix-cat rounded accent-pink-500" value="breath" checked> 숨소리/기타</label>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-200 pt-3">
+          <span class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">사용할 문장부호 선택</span>
+          <div class="flex flex-wrap gap-3 text-sm text-slate-700">
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" class="punc-opt rounded accent-pink-500" value="," checked> 쉼표 (,)</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" class="punc-opt rounded accent-pink-500" value="…"> 말줄임표 (…)</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" class="punc-opt rounded accent-pink-500" value="~"> 물결 (~)</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" class="punc-opt rounded accent-pink-500" value="!"> 느낌표 (!)</label>
+            <label class="inline-flex items-center gap-1 cursor-pointer"><input type="checkbox" class="punc-opt rounded accent-pink-500" value="!!"> 강한 느낌표 (!!)</label>
+          </div>
+        </div>
+
+        <div class="border-t border-slate-200 pt-3 flex items-center gap-2">
+          <label for="lengthSelect" class="text-sm font-semibold text-slate-600">생성 길이:</label>
+          <select id="lengthSelect" class="input-field px-3 py-1.5 rounded-lg text-sm">
+            <option value="2">짧게 (2~3개)</option>
+            <option value="4" selected>보통 (3~5개)</option>
+            <option value="6">길게 (5~7개)</option>
+            <option value="7">아주 길게 (7~10개)</option>
+            <option value="10">최대 (10~15개)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button id="generateBtn" class="flex-1 py-3 bg-pink-500 hover:bg-pink-600 text-white font-bold rounded-xl shadow-sm transition active:scale-[0.99]">생성하기</button>
+        <button id="copyBtn" class="px-5 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl transition">복사</button>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-1.5">
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">생성 결과</span>
+          <span id="statusText" class="text-xs text-pink-600 font-medium"></span>
+        </div>
+        <div id="outputBox" class="w-full min-h-[80px] p-4 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 text-lg flex items-center justify-start break-all">
+          <span class="text-slate-400 text-sm">생성 버튼을 누르면 이곳에 결과가 표시됩니다.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const defaultData = {
+      soft: "흣, 하아, 응, 으응, 흐읏, 흑, 아흑, 읏, 흐흠, 하읏",
+      hard: "아앙, 흐아앙, 앗, 아흣, 아아악, 으아응, 흐윽, 아, 앙, 흐아앗",
+      resist: "안 돼, 싫어, 멈춰, 으읏, 흐윽, 제발, 그만, 아냐, 흐트",
+      positive: "좋아, 더, 좀 더, 계속, 응, 응앗, 헤응, 하윽, 더 해줘",
+      breath: "헉, 흡, 앗, 하아아, 흐으, 으읍, 흑, 으하, 후으, 하앗"
+    };
+
+    const categoryNames = {
+      soft: "약한 자극", hard: "강한 자극", resist: "거부/저항", positive: "긍정/도발", breath: "숨소리/기타"
+    };
+
+    let activeCategory = 'soft';
+    let store = {};
+
+    function initStore() {
+      Object.keys(defaultData).forEach(cat => {
+        const saved = localStorage.getItem(`rp-sound-${cat}`);
+        store[cat] = saved !== null ? saved : defaultData[cat];
+      });
+    }
+
+    function saveCurrentCategoryData() {
+      const val = document.getElementById('wordsInput').value;
+      store[activeCategory] = val;
+      localStorage.setItem(`rp-sound-${activeCategory}`, val);
+    }
+
+    function updateTabUI() {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        const cat = btn.getAttribute('data-cat');
+        if (cat === activeCategory) {
+          btn.classList.add('tag-active');
+          btn.classList.remove('tag');
+        } else {
+          btn.classList.remove('tag-active');
+          btn.classList.add('tag');
+        }
+      });
+      document.getElementById('currentCatLabel').textContent = `${categoryNames[activeCategory]} 단어 목록`;
+      document.getElementById('wordsInput').value = store[activeCategory] || '';
+    }
+
+    function getRandomItems(arr, count) {
+      const res = [];
+      for (let i = 0; i < count; i++) {
+        res.push(arr[Math.floor(Math.random() * arr.length)]);
+      }
+      return res;
+    }
+
+    function generateText() {
+      saveCurrentCategoryData();
+      let pool = [];
+
+      const checkedCats = Array.from(document.querySelectorAll('.mix-cat:checked')).map(el => el.value);
+      
+      if (checkedCats.length === 0) {
+        document.getElementById('outputBox').innerHTML = '<span class="text-rose-500 text-sm">믹스할 카테고리를 최소 하나 이상 선택해 주세요.</span>';
+        return;
+      }
+
+      checkedCats.forEach(cat => {
+        if (store[cat]) {
+          const items = store[cat].split(/[,,\n]+/).map(x => x.trim()).filter(Boolean);
+          pool = pool.concat(items);
+        }
+      });
+
+      if (pool.length === 0) {
+        document.getElementById('outputBox').innerHTML = '<span class="text-rose-500 text-sm">선택한 카테고리에 등록된 단어가 없습니다.</span>';
+        return;
+      }
+
+      const lenVal = Number(document.getElementById('lengthSelect').value);
+      const ranges = { 2: [2, 3], 4: [3, 5], 6: [5, 7], 7: [7, 10], 10: [10, 15] };
+      const [min, max] = ranges[lenVal];
+      const count = min + Math.floor(Math.random() * (max - min + 1));
+
+      const selectedPuncs = Array.from(document.querySelectorAll('.punc-opt:checked')).map(el => el.value);
+
+      const selectedWords = getRandomItems(pool, count);
+      const resultParts = selectedWords.map((word, idx) => {
+        if (selectedPuncs.length === 0) return word;
+        const mark = selectedPuncs[Math.floor(Math.random() * selectedPuncs.length)];
+        return idx === count - 1 ? word + (mark === ',' ? '.' : mark) : word + mark;
+      });
+
+      const finalStr = resultParts.join(' ');
+      document.getElementById('outputBox').textContent = finalStr;
+    }
+
+    function showStatus(msg) {
+      const el = document.getElementById('statusText');
+      el.textContent = msg;
+      setTimeout(() => { el.textContent = ''; }, 1600);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initStore();
+      updateTabUI();
+
+      document.getElementById('categoryTabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        saveCurrentCategoryData();
+        activeCategory = btn.getAttribute('data-cat');
+        updateTabUI();
+      });
+
+      document.getElementById('wordsInput').addEventListener('input', () => {
+        store[activeCategory] = document.getElementById('wordsInput').value;
+        localStorage.setItem(`rp-sound-${activeCategory}`, store[activeCategory]);
+      });
+
+      document.getElementById('generateBtn').addEventListener('click', generateText);
+
+      document.getElementById('copyBtn').addEventListener('click', () => {
+        const txt = document.getElementById('outputBox').textContent;
+        if (!txt || txt.includes('생성 버튼을') || txt.includes('선택해 주세요') || txt.includes('등록된 단어가')) return;
+        navigator.clipboard.writeText(txt);
+        showStatus('복사되었습니다');
+      });
+    });
+  </script>
+</body>
+</html>
